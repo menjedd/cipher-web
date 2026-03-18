@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Keyboard Path Cipher</title>
+
+<style>
+body {
+    margin: 0;
+    font-family: 'Poppins', sans-serif;
+    background: linear-gradient(135deg, #0f0c29, #302b63, #24243e);
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: white;
+}
+
+.container {
+    width: 90%;
+    max-width: 900px;
+    background: rgba(255,255,255,0.05);
+    backdrop-filter: blur(20px);
+    border-radius: 20px;
+    padding: 30px;
+    box-shadow: 0 0 50px rgba(255,0,255,0.2);
+    animation: fadeIn 1s ease;
+}
+
+/* Judul */
+.title {
+    text-align: center;
+    font-size: 32px;
+    font-weight: bold;
+    background: linear-gradient(90deg, #00ffff, #ff00cc, #ffff00);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    text-shadow: 0 0 20px rgba(255,255,255,0.3);
+}
+
+/* Nama */
+.author {
+    text-align: center;
+    margin-top: -10px;
+    margin-bottom: 20px;
+    font-size: 14px;
+    color: #ddd;
+    letter-spacing: 2px;
+    opacity: 0.8;
+}
+
+.grid {
+    display: flex;
+    gap: 20px;
+    flex-wrap: wrap;
+}
+
+.card {
+    flex: 1;
+    min-width: 280px;
+    background: rgba(255,255,255,0.08);
+    padding: 20px;
+    border-radius: 15px;
+    transition: 0.3s;
+}
+
+.card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 0 20px #ff00cc;
+}
+
+textarea {
+    width: 100%;
+    height: 100px;
+    border: none;
+    border-radius: 10px;
+    padding: 10px;
+    margin-top: 10px;
+    font-size: 14px;
+}
+
+button {
+    margin-top: 10px;
+    width: 100%;
+    padding: 12px;
+    border: none;
+    border-radius: 10px;
+    background: linear-gradient(45deg, #ff00cc, #00ffff);
+    color: white;
+    font-weight: bold;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+button:hover {
+    transform: scale(1.05);
+    box-shadow: 0 0 20px #00ffff;
+}
+
+.copy-btn {
+    margin-top: 5px;
+    background: #222;
+}
+
+.result {
+    margin-top: 10px;
+    background: rgba(0,0,0,0.4);
+    padding: 10px;
+    border-radius: 10px;
+    min-height: 40px;
+    font-weight: bold;
+    letter-spacing: 2px;
+}
+
+/* animasi */
+@keyframes fadeIn {
+    from {opacity: 0; transform: translateY(20px);}
+    to {opacity: 1; transform: translateY(0);}
+}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+    <h1 class="title">Keyboard Path Cipher</h1>
+    <p class="author">by Nabila Meizahra</p>
+
+    <div class="grid">
+
+        <!-- ENKRIPSI -->
+        <div class="card">
+            <h2>Enkripsi</h2>
+            <textarea id="plain" placeholder="Masukkan plaintext..."></textarea>
+            <button onclick="encrypt()">Encrypt</button>
+            <div class="result" id="cipher"></div>
+            <button class="copy-btn" onclick="copyText('cipher')">Copy</button>
+        </div>
+
+        <!-- DEKRIPSI -->
+        <div class="card">
+            <h2>Dekripsi</h2>
+            <textarea id="cipherInput" placeholder="Masukkan ciphertext..."></textarea>
+            <button onclick="decrypt()">Decrypt</button>
+            <div class="result" id="result"></div>
+            <button class="copy-btn" onclick="copyText('result')">Copy</button>
+        </div>
+
+    </div>
+</div>
+
+<script>
+const keyboard = [
+    "QWERTYUIOP",
+    "ASDFGHJKL",
+    "ZXCVBNM"
+];
+
+function findRow(char) {
+    for (let row of keyboard) {
+        if (row.includes(char)) return row;
+    }
+    return null;
+}
+
+function typeEffect(element, text) {
+    element.innerHTML = "";
+    let i = 0;
+
+    function typing() {
+        if (i < text.length) {
+            element.innerHTML += text.charAt(i);
+            i++;
+            setTimeout(typing, 40);
+        }
+    }
+    typing();
+}
+
+function encrypt() {
+    let text = document.getElementById("plain").value.toUpperCase();
+    let result = "";
+
+    for (let char of text) {
+        let row = findRow(char);
+        if (row) {
+            let i = row.indexOf(char);
+            result += row[(i + 1) % row.length];
+        } else {
+            result += char;
+        }
+    }
+
+    typeEffect(document.getElementById("cipher"), result);
+}
+
+function decrypt() {
+    let text = document.getElementById("cipherInput").value.toUpperCase();
+    let result = "";
+
+    for (let char of text) {
+        let row = findRow(char);
+        if (row) {
+            let i = row.indexOf(char);
+            result += row[(i - 1 + row.length) % row.length];
+        } else {
+            result += char;
+        }
+    }
+
+    typeEffect(document.getElementById("result"), result);
+}
+
+function copyText(id) {
+    let text = document.getElementById(id).innerText;
+    navigator.clipboard.writeText(text);
+    alert("Copied: " + text);
+}
+</script>
+
+</body>
+</html>
